@@ -1,7 +1,5 @@
 #include <ros.h>
 #include <std_msgs/String.h>
-#include <geometry_msgs/Quaternion.h>
-#include <geometry_msgs/Vector3.h>
 #include <geometry_msgs/Twist.h>
 
 #define BR_LF_1 2                   //break   PE_4
@@ -85,7 +83,7 @@ double ang_speed;
     digitalWrite(DIR_LB, LOW);
     digitalWrite(DIR_RF, LOW);
     digitalWrite(DIR_RB, LOW);
-
+    //Breakpin high
     //setting up the pwm , setting it all to zero as bot will be stationary in this situation
     pwm_LF = 0;
     pwm_LB = 0;
@@ -225,25 +223,32 @@ double ang_speed;
     }
 
 }
+  analogWrite(PWM_LF, pwm_LF);
+  analogWrite(PWM_LB, pwm_LB);
+  analogWrite(PWM_RF, pwm_RF);
+  analogWrite(PWM_LF, pwm_RB);
 }
 
 ros::NodeHandle nh;
 ros::Subscriber<geometry_msgs::Twist> sub("cmd_vel", &cmdVelCb);
 
 void setup() {
+  nh.getHardware()-> setBaud(9600);
+
+  
   // put your setup code here, to run once:
- pinMode(PWM_LF, OUTPUT);           //PE_2  23
- pinMode(PWM_RF , OUTPUT);          //24
- pinMode(PWM_LB, OUTPUT);           //PE_2   25
- pinMode(PWM_RB, OUTPUT);           //26
- pinMode(BR_LB_3,  OUTPUT);           //PE_2    27
- pinMode(DIR_RF,  OUTPUT);             //4
- pinMode(DIR_LB,  OUTPUT);           //PE_2      5
- pinMode(DIR_RB,  OUTPUT);                 //6
- pinMode(BR_LF_1,  OUTPUT);           //PE_2     2
- pinMode(BR_RF_2,  OUTPUT);                //27
- pinMode(DIR_LF, OUTPUT);           //PE_2     3
- pinMode(BR_RB_4,  OUTPUT);           //8
+ pinMode(PWM_LF, OUTPUT);           //PD_0        23
+ pinMode(PWM_RF ,OUTPUT);           //PD_1        24
+ pinMode(PWM_LB, OUTPUT);           //PD_2        25
+ pinMode(PWM_RB, OUTPUT);           //PD_3        26
+ pinMode(BR_LB_3,OUTPUT);           //PE_1        27
+ pinMode(DIR_RF, OUTPUT);           //PB_1        4
+ pinMode(DIR_LB, OUTPUT);           //PE_4        5
+ pinMode(DIR_RB, OUTPUT);           //PE_5        6
+ pinMode(BR_LF_1,OUTPUT);           //PB_5        2
+ pinMode(BR_RF_2,OUTPUT);           //PE_1        7
+ pinMode(DIR_LF, OUTPUT);           //PB_0        3
+ pinMode(BR_RB_4,OUTPUT);           //PA_5        8
 
  
 nh.initNode();
