@@ -1,0 +1,212 @@
+void setup() {
+  // put your setup code here, to run once:
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+}/*#include <ros.h>
+//Include file for sensor_msgs
+#include<sensor_msgs/JointState.h>*/
+
+// Motor Drivers 
+double motor_1;
+double motor_2;
+double motor_3;
+double motor_4;
+
+
+/* Encoder Data calculation for motor_1 (Left front ) */
+double pulse_counter1=0;
+//ISR - Rising edge
+
+void motor_1_distance()
+{
+  switch (digitalRead(23))
+  {
+   
+  case HIGH:  Serial.print("clockwise");
+              pulse_counter1++;
+              break;
+            
+  case LOW:   pulse_counter1--;
+              break;
+  
+  default:    break;
+  }
+}
+
+
+/*##################################################################*/
+
+/*##################################################################*/
+/* Encoder Data calculation for motor_2 (right front) */
+double pulse_counter2=0;
+//ISR - Rising edge
+
+void motor_2_distance()
+{
+  switch (digitalRead(24))
+  {
+   
+  case HIGH:  Serial.print("clockwise");
+              pulse_counter2++;
+              break;
+            
+  case LOW:   pulse_counter2--;
+              break;
+  
+  default:    break;
+  }
+}
+
+
+/*##################################################################*/
+
+/*##################################################################*/
+/* Encoder Data calculation for motor_3 (left back) */
+double pulse_counter3=0;
+//ISR - Rising edge
+
+void motor_3_distance()
+{
+  switch (digitalRead(25))
+  {
+   
+  case HIGH:  Serial.print("clockwise");
+              pulse_counter3++;
+              break;
+            
+  case LOW:   pulse_counter3--;
+              break;
+  
+  default:    break;
+  }
+}
+
+
+/*##################################################################*/
+
+/*##################################################################*/
+/* Encoder Data calculation for motor_4  */
+double pulse_counter4=0;
+//ISR - Rising edge
+
+void motor_4_distance()
+{
+  switch (digitalRead(26))
+  {
+   
+  case HIGH:  //Serial.print("clockwise");
+              pulse_counter4++;
+              break;
+            
+  case LOW:   pulse_counter4--;
+              break;
+  
+  default:    break;
+  }
+}
+
+
+/*##################################################################*/
+
+//Nodehandler object
+//ros::NodeHandle ntivac;
+
+//Instantiating Angle publisher message:
+//sensor_msgs::JointState angle_publisher;
+
+//Instantiating publisher object:
+//ros::Publisher joint_state_pub("/joint_states", &angle_publisher);
+
+//Specifying joint names: Similar to URDF joint declarations.
+//char *joint_names[]={"base_link_to_wheel1", "base_link_to_wheel2", "base_link_to_wheel3", "base_link_to_wheel4", "manipulator_to_base_link", "base_cylinder_to_link2", "link_2_to_link_3", "link_3_to_link_4", "link_4_to_gripper_base", "gripper_base_to_finger_base1", "finger_base1_to_finger_top1", "gripper_base_to_finger_base2", "finger_base2_to_finger_top2", "gripper_base_to_finger_base3", "finger_base3_to_finger_top3"};
+
+//position variable of data type as same as sensor_msgs::JointState msg:
+//Will only use position inorder to give joint angles.
+double pos[15];
+
+//Velocity variable- Not used
+double vel[15];
+
+//Effort variable- not used:
+double eff[15];
+
+void setup() 
+{
+  //Setting BAUD rate of tiva-c.
+/*  ntivac.getHardware()-> setBaud(115200);
+  
+  //Initialising node
+  ntivac.initNode();
+  ntivac.advertise(joint_state_pub);*/
+
+  //Encoder 1 Channel B input pulse-
+  pinMode(23,INPUT);
+  //Attaching interrupt from encoder 1 channel A
+  pinMode(3,INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(3),motor_1_distance,RISING);
+
+  //Encoder 2 Channel B input pulse
+  pinMode(24,INPUT);
+  //Attaching interrupt from encoder 2 channel A
+  pinMode(4,INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(4),motor_2_distance,RISING);
+
+  //Encoder 3 Channel B input pulse
+  pinMode(25,INPUT);
+  //Attaching interrupt from encoder 3 channel A
+  pinMode(5,INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(5),motor_3_distance,RISING);
+
+  //Encoder 4 Channel B input pulse
+  pinMode(26,INPUT);
+  //Attaching interrupt from encoder 4 channel A
+  pinMode(6,INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(6),motor_4_distance,RISING);
+
+  
+  
+  //Defining length of each array in sensor_msgs::JointState message:
+  /*angle_publisher.name_length = 15;
+  angle_publisher.position_length=15;
+  angle_publisher.velocity_length=0;
+  angle_publisher.effort_length=0;
+
+  angle_publisher.name = joint_names;
+  angle_publisher.position = pos;
+  angle_publisher.velocity = vel;
+  angle_publisher.effort = eff;*/
+  
+}
+
+void loop() 
+{ 
+  //Encoder distance from pulses-
+  motor_1 = pulse_counter1*0.00327;
+  motor_2 = pulse_counter2*0.00327;
+  motor_3 = pulse_counter3*0.00327;
+  motor_4 = pulse_counter4*0.00327;
+  
+  motor=(motor1+motor2+motor3+motor4)/4
+  
+  //Timestamping header
+ /* angle_publisher.header.stamp = ntivac.now();
+
+  //Assign joint values:
+  angle_publisher.position[4]=joint_2;
+  angle_publisher.position[5]=joint_1;
+  angle_publisher.position[6]=joint_3;
+  angle_publisher.position[7]=joint_4;
+  angle_publisher.position[8]=joint_5;
+
+
+
+  //Publish values:
+  joint_state_pub.publish(&angle_publisher);
+  
+  ntivac.spinOnce();*/
+  
+}
