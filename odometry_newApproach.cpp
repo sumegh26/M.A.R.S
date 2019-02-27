@@ -12,7 +12,7 @@ dec_description::odom_data store;
 long _PreviousLeftEncoderCounts = 0;
 long _PreviousRightEncoderCounts = 0;
 ros::Time current_time, last_time;
-double DistancePerCount = (3.14159265 * 0.15)/30; //the wheel diameter is 0.1m
+double DistancePerCount = (3.14159265 * 0.10)/96; //the wheel diameter is 0.10m
 //final odometric datas
 double x;
 double y;
@@ -39,8 +39,8 @@ void odomcallback(const dec_description::odom_data::ConstPtr& odom_vl)
  dt = (current_time - last_time).toSec();
  v_left = deltaLeft * DistancePerCount/dt;
  v_right = deltaRight * DistancePerCount/dt;
- delta_distance=0.5f*(double)(deltaLeft+deltaRight)*DistancePerCount;
- delta_th = (double)(deltaRight-deltaLeft)*DistancePerCount/0.50f; //Distance between the two wheels is 0.36m
+ delta_distance=0.80f*(double)(deltaLeft+deltaRight)*DistancePerCount;
+ delta_th = (double)(deltaRight-deltaLeft)*DistancePerCount/0.80f; //Distance between the two wheels is 0.80m
  delta_x = delta_distance*(double)cos(th);
  delta_y = delta_distance*(double)sin(th);
  x += delta_x;
@@ -90,6 +90,7 @@ int main(int argc, char **argv)
     odom.pose.pose.position.y = y;
     odom.pose.pose.position.z = 0.0;
     odom.pose.pose.orientation = odom_quat;
+    
     //set the velocity
     odom.child_frame_id = "base_link";
     odom.twist.twist.linear.x=delta_x/dt;
